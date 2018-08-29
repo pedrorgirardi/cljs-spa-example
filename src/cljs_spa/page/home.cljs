@@ -1,6 +1,6 @@
 (ns cljs-spa.page.home
   (:require [react-select :as react-select]
-            [cljs-spa.state :refer [!state]]))
+            [re-frame.core :as rf]))
 
 (def options
   [{:value "simplicity" :label "simplicity"}
@@ -11,15 +11,15 @@
   [:> (.-default react-select)
    {:is-multi true
     :options (clj->js options)
-    :on-change (fn [xs] (swap! !state assoc :selection
-                               (->> (js->clj xs :keywordize-keys true)
-                                    (map :label)
-                                    (into #{}))))}])
+    :on-change (fn [xs]
+                 (rf/dispatch [::!selection (->> (js->clj xs :keywordize-keys true)
+                                                 (map :label)
+                                                 (into #{}))]))}])
 
 (defn result-ui []
   [:div
    [:h3 "So you like"]
-   (let [selection (:selection @!state)]
+   (let [selection @(rf/subscribe [::?selection])]
      (if (seq selection)
        [:div (pr-str selection)]
        "Nothing yet"))])
@@ -31,3 +31,12 @@
                   :margin-bottom 20}} "What do you like?"]
    [selector-ui]
    [result-ui]])
+
+
+(rf/reg-event-db ::!selection
+  (fn [db [_ selection]]
+    (assoc-in db [:page/home :selection] selection)))
+
+(rf/reg-sub ::?selection
+  (fn [db _]
+    (get-in db [:page/home :selection])))

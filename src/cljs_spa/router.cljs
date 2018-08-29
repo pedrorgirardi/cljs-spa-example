@@ -1,13 +1,13 @@
 (ns cljs-spa.router
   (:require [goog.object :as gobj]
-            [cljs-spa.state :refer [!state]]
             [reagent.core :as r]
             [doublebundle.router5 :as router5]
-            [doublebundle.router5-browser-plugin :as router5-browser-plugin]))
+            [doublebundle.router5-browser-plugin :as router5-browser-plugin]
+            [re-frame.core :as rf]))
 
 (defn handle-load-error [e]
   (when (-> e ex-data :load-error)
-    (swap! !state assoc :page-state :failed))
+    (rf/dispatch [:!page-state :failed]))
   (throw e))
 
 (defn handle-rejection [e]
@@ -26,11 +26,12 @@
         (.then (fn []
                  (if on-activate
                    (-> (js/Promise. (fn [resolve]
-                                      (resolve (swap! !state assoc :page-state :loading))))
+                                      (rf/dispatch [:!page-state :loading])
+                                      (resolve {:page-state :loading})))
                        (.then (fn [] (on-activate (js->clj to-state :keywordize-keys true))))
                        (.catch handle-load-error)
                        (.catch handle-rejection))
-                   (swap! !state assoc :page-state :loaded))
+                   (rf/dispatch [:!page-state :loaded]))
                  true)))))
 
 (defn create-router [routes]

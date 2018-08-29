@@ -1,12 +1,12 @@
 (ns cljs-spa.layout
   (:require [reagent.core :as r]
-            [cljs-spa.state :refer [!state]]))
+            [re-frame.core :as rf]))
 
 (defn loading-ui []
   [:div.loading])
 
 (defn page-state-ui []
-  (case (:page-state @!state)
+  (case @(rf/subscribe [:?page-state])
     :loading
     [loading-ui]
     :loaded
@@ -41,3 +41,12 @@
      (let [children (r/children (r/current-component))]
        (assert (= 1 (count children)))
        (first children))]]])
+
+
+(rf/reg-event-db :!page-state
+  (fn [db [_ page-state]]
+    (assoc db :page-state page-state)))
+
+(rf/reg-sub :?page-state
+  (fn [db _]
+    (get db :page-state)))
