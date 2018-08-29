@@ -37,4 +37,4 @@ the timer is cleared."]])
 
 (rf/reg-event-db ::!clock
   (fn [db [_ f]]
-    (update-in db [:page/home :clock] f)))
+    (update-in db [:page/clock :clock] f)))
