@@ -5,6 +5,8 @@ resources/public/js/out
 /checkouts
 /out
 /.repl
+.idea/
+*.iml
 pom.xml
 pom.xml.asc
 \#*\#
