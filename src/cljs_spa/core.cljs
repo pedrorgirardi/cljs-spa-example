@@ -3,8 +3,7 @@
             [re-frame.core :as rf]
             [cljs-spa.util :as util]
             [cljs-spa.router :as router]
-            [cljs-spa.routes :as routes]
-            [cljs-spa.state :as state]))
+            [cljs-spa.routes :as routes]))
 
 (defonce re-init-router (util/singleton-fn (fn [] (router/create-router routes/the-routes))
                                            router/stop-router))

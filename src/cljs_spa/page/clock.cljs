@@ -1,6 +1,5 @@
 (ns cljs-spa.page.clock
   (:require [cljs-spa.util :as util]
-            [cljs-spa.state :refer [!state]]
             [re-frame.core :as rf]))
 
 (defn tick []
